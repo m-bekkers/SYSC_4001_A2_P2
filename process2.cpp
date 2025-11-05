@@ -12,7 +12,7 @@ int main() {
 	int counter=0;
 	int cycle =0;
 		
-	while(1){
+	while(counter > -500){
 		printf("Process 2 (PID %d) Cycle number: %d", getpid(), cycle);
 			
 		if(counter % 3 == 0){
@@ -25,7 +25,8 @@ int main() {
 		cycle++;
 		sleep(1);
 								
-		}
+	}
+	printf("process 2 (PID %d) reached -500. Exiting.\n", getpid());
 	return 0; 
 
 }
