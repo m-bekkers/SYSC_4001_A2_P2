@@ -1,63 +1,54 @@
+/**
+Laavanya Nayar, 101157871
+
+**/
+
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <stdlib.h>
 
 int main() {
 
-	pid_t pid1,pid2;
+	pid_t pid;
+	pid =fork();
 	
-	pid1 =fork();
-	
-	if(pid1<0){
+	if(pid<0){
 		//error
 		perror("fork failed");
-		return 1;
+		exit(1);
 		
-	}
-	
-	if(pid1==0){
-		// child process
+		}
+	if(pid==0){
+		// child process to replace with process 2
+		execl("./bin/process2","process2",NULL);
+		perror("exec failed");
+		
+		}
+		
+	else{
+		// parent process so count upwards
 		int counter=0;
-		while(1){
+		int cycle =0;
 		
-			printf("Process 1 (PID %d): counter = %d \n",getpid(),counter++);
+		while(1){
+			printf("Process 1 (PID %d) Cycle number: %d", getpid(), cycle);
+			
+			if(counter % 3 == 0){
+				printf("---%d is a multiple of 3", counter);
+			
+			}
+			printf("\n");
+		
+			counter++;
+			cycle++;
 			sleep(1);
 								
-		}
-	}
-	
-	else{
-		// parent process
-		pid2 =fork();
-		
-		if(pid2<0){
-			//error
-			perror("fork failed");
-			return 1;
-			
-		}
-			
-		if(pid2==0){
-			// child process
-			int counter=0;
-			while(1){
-			
-				printf("Process 2 (PID %d): counter = %d \n",getpid(),counter++);
-				sleep(1);
-									
 			}
 		}
-			
-		
-		else{
-			printf("Parent PID: %d, Child 1 PID: %d, Child 2 PID: %d\n",getpid(), pid1, pid2);
-			return 0; // parrent exits.
-					
-		}	
-	}
-		
 	return 0;
 	
-}
+	}
 		
 	
