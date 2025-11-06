@@ -40,7 +40,13 @@ int main() {
             counter++;
         }
 
-        std::cout << message << " process PID(" << pid_num << ") cycle number: " << counter << std::endl;
+        std::cout << message << " process PID(" << pid_num << ") cycle number: " << counter;
+
+        if (counter % 3 == 0) {
+            std::cout << " -- " << counter << " is divisible by 3";
+        }
+
+        std::cout << std::endl;
         
         sleep(1);
     }
