@@ -23,6 +23,7 @@ int main() {
     case 0:
         std::cout << "Process is child, proceeding..." << std::endl;
         message = "Child";
+        execl("./bin/part2-3_process2", "part2-3_process2", NULL);
         break;
     
     default:
@@ -34,20 +35,10 @@ int main() {
 
     std::cout << message << " process PID(" << pid_num << ") cycle number: " << counter << std::endl;
     
-    while (1) {
-    
-        if (pid == 0) { // child
-            if (counter <= -500) {
-                exit(0);
-            }
-            counter--;
-        }
-        else { // parent
+        while (1) {
             int stat_val;
             pid_t child_pid;
-
             child_pid = wait(&stat_val);
-
             printf("Child has finished: PID = %d\n", child_pid);
             
             if (WIFEXITED(stat_val)) {
@@ -58,10 +49,10 @@ int main() {
             }
             std::cout << "Child process has terminated, terminating parent process..." << std::endl;
             exit(0);
+
         }
 
         std::cout << message << " process PID(" << pid_num << ") cycle number: " << counter << std::endl;
         
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-}

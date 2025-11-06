@@ -20,6 +20,7 @@ int main() {
     case 0:
         std::cout << "Process is child, proceeding..." << std::endl;
         message = "Child";
+        execl("./bin/part2-2_process2", "part2-2_process2", NULL);
         break;
     
     default:
@@ -32,13 +33,7 @@ int main() {
     std::cout << message << " process PID(" << pid_num << ") cycle number: " << counter << std::endl;
     
     while (1) {
-    
-        if (pid == 0) {
-            counter--;
-        }
-        else {
-            counter++;
-        }
+        counter++;
 
         std::cout << message << " process PID(" << pid_num << ") cycle number: " << counter;
 
