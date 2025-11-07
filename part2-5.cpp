@@ -9,8 +9,57 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/sem.h>
 
-#include "part2-4_shared.hpp"
+#include "part2-5_shared.hpp"
+
+static int set_semvalue(void);
+static void del_semvalue(void);
+static int semaphore_p(void);
+static int semaphore_v(void);
+
+static int sem_id;
+
+static int set_semvalue(void) {
+    union semun sem_union;
+
+    sem_union.val = 1;
+    if (semctl(sem_id, 0, SETVAL, sem_union) == -1) return(0);
+    return (1);
+}
+
+static void del_semvalue(void) {
+    union semun sem_union;
+
+    if (semctl(sem_id, 0, IPC_RMID, sem_union) == -1)
+    fprintf(stderr, "Failed to delete semaphore\n");
+}
+
+static int semaphore_p(void) {
+    struct sembuf sem_b;
+
+    sem_b.sem_num = 0;
+    sem_b.sem_op = -1; // P()
+    sem_b.sem_flg = SEM_UNDO;
+    if (semop(sem_id, &sem_b, 1) == -1) {
+        fprintf(stderr, "semaphore_p failed\n");
+        return(0);
+    }
+    return 1;
+}
+
+static int semaphore_v(void) {
+    struct sembuf sem_b;
+
+    sem_b.sem_num = 0;
+    sem_b.sem_op = 1; // V()
+    sem_b.sem_flg = SEM_UNDO;
+    if (semop(sem_id, &sem_b, 1) == -1) {
+        fprintf(stderr,"semaphore_v failed\n");
+        return(0);
+    }
+    return 1;
+}
 
 int main() {
     // create pid
@@ -66,6 +115,15 @@ int main() {
     int pid_num = getpid();
 
     //std::cout << message << " process PID(" << pid_num << ") cycle number: " << shared_data->shared_counter << std::endl;
+
+    sem_id = semget((key_t)6969, 1, 0666 | IPC_CREAT);
+
+    if (!set_semvalue()) { // error while getting sem_id
+        std::cout << "Error while initializing semaphore" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+
     
     while (shared_data->shared_counter <= 500) {
         //int stat_val;
@@ -85,6 +143,8 @@ int main() {
         //std::cout << "Child process has terminated, terminating parent process..." << std::endl;
         //exit(0);
 
+        semaphore_p();
+
         std::cout << message << " process PID(" << pid_num << ") cycle number: " << shared_data->shared_counter;
 
         if (shared_data->shared_counter % 3 == 0) {
@@ -94,10 +154,13 @@ int main() {
         shared_data->shared_counter++;
 
         std::cout << std::endl;
+
+        semaphore_v();
         
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
     shmdt(shared_memory);
     shmctl(shmid, IPC_RMID, 0);
+    del_semvalue();
 }
