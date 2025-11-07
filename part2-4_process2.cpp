@@ -42,13 +42,15 @@ int main () {
     while(shared_data->shared_counter <= 500) {
         
         if (shared_data->shared_counter >= 100) {
-            shared_data->shared_counter++;
+            
 
             std::cout << "Child" << " process PID(" << pid_num << ") cycle number: " << shared_data->shared_counter;
 
             if (shared_data->shared_counter % 3 == 0) {
                 std::cout << " -- " << shared_data->shared_counter << " is divisible by 3";
             }
+
+            shared_data->shared_counter++;
 
             std::cout << std::endl;
 

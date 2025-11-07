@@ -85,13 +85,13 @@ int main() {
         //std::cout << "Child process has terminated, terminating parent process..." << std::endl;
         //exit(0);
 
-        shared_data->shared_counter++;
-
         std::cout << message << " process PID(" << pid_num << ") cycle number: " << shared_data->shared_counter;
 
         if (shared_data->shared_counter % 3 == 0) {
             std::cout << " -- " << shared_data->shared_counter << " is divisible by 3";
         }
+
+        shared_data->shared_counter++;
 
         std::cout << std::endl;
         
